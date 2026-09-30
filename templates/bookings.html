@@ -1,0 +1,326 @@
+{% extends "base.html" %}
+{% block title %}Bookings{% endblock %}
+{% block body %}
+<h1>Bookings & payments</h1>
+<p class="sub">Ledger per file. Hotels &amp; ferries need human approval. Docs checklist, itinerary, and draft chases live on each card.</p>
+{% for b in bookings %}
+{% set bflights = flights_by.get(b.id, []) %}
+{% set bcabs = cabs_by.get(b.id, []) %}
+{% set bhotels = hotels_by.get(b.id, []) %}
+{% set bferries = ferries_by.get(b.id, []) %}
+{% set bdocs = docs_by.get(b.id, []) %}
+{% set btravelers = travelers_by.get(b.id, []) %}
+{% set cur = b.currency or 'USD' %}
+{% set due = (b.quoted_inr or 0) - (b.paid or 0) %}
+<div class="card">
+  <div class="row">
+    <div>
+      <strong>{{ b.ref }} · {{ b.traveller or "Guest" }}</strong>
+      <div class="muted">{{ b.package_name or "Custom itinerary" }} · {{ b.travel_from }} to {{ b.travel_to }} · {{ b.pax }} pax · {{ cur }}</div>
+      {% if b.guest_nationality or b.guest_passport or b.guest_visa %}
+      <div class="muted">
+        {% if b.guest_nationality %}{{ b.guest_nationality }}{% endif %}
+        {% if b.guest_passport %} · passport {{ b.guest_passport }}{% endif %}
+        {% if b.guest_visa %} · visa {{ b.guest_visa }}{% endif %}
+        {% if b.guest_phone %} · {{ b.guest_phone }}{% endif %}
+      </div>
+      {% endif %}
+      <div style="margin-top:6px;display:flex;gap:8px;flex-wrap:wrap">
+        <a class="btn small ghost" href="/bookings/{{ b.id }}/itinerary.html">Itinerary</a>
+        <a class="btn small ghost" href="/bookings/{{ b.id }}/draft?kind=quote">Draft quote</a>
+        <a class="btn small ghost" href="/bookings/{{ b.id }}/draft?kind=balance">Draft balance</a>
+        <a class="btn small ghost" href="/bookings/{{ b.id }}/draft?kind=docs">Draft docs</a>
+        {% if due > 0 %}
+        <form class="inline" method="post" action="/bookings/{{ b.id }}/followup-balance"><button class="btn small" type="submit">+ Balance follow-up</button></form>
+        {% endif %}
+      </div>
+    </div>
+    <div style="text-align:right">
+      <div>Quoted {{ b.quoted_inr|money(cur) }}</div>
+      <div class="muted">Paid {{ b.paid|money(cur) }} · due {{ due|money(cur) }}</div>
+      {% if due > 0 %}<span class="pill late">balance due</span>{% else %}<span class="pill ok">settled</span>{% endif %}
+    </div>
+  </div>
+  <form method="post" action="/bookings/{{ b.id }}/pay" class="form-grid" style="margin-top:10px">
+    <div><label>Amount ({{ cur }})</label><input name="amount_inr" type="number" required></div>
+    <div><label>Kind</label>
+      <select name="kind"><option>Advance</option><option>Balance</option><option>Refund</option><option>Vendor</option></select>
+    </div>
+    <div><label>Note</label><input name="note" placeholder="Card / Zelle / wire / cash"></div>
+    <div><button class="btn" type="submit">Record payment</button></div>
+  </form>
+
+  <h3 style="margin:22px 0 8px;font-size:15px;letter-spacing:.03em">Travelers</h3>
+  {% if not btravelers %}<p class="muted">No travelers linked yet.</p>{% endif %}
+  {% for t in btravelers %}
+  <div class="row">
+    <div>
+      <strong>{{ t.name }}</strong>
+      <div class="muted">{{ t.nationality or "—" }} · passport {{ t.passport_no or "—" }} exp {{ t.passport_expiry or "—" }}{% if t.phone %} · {{ t.phone }}{% endif %}</div>
+    </div>
+  </div>
+  {% endfor %}
+  <details style="margin-top:8px">
+    <summary class="muted" style="cursor:pointer">Add traveler</summary>
+    <form method="post" action="/bookings/{{ b.id }}/travelers" class="form-grid" style="margin-top:10px">
+      <div><label>Name</label><input name="name" required></div>
+      <div><label>Phone</label><input name="phone"></div>
+      <div><label>Email</label><input name="email"></div>
+      <div><label>DOB</label><input name="dob" type="date"></div>
+      <div><label>Passport no</label><input name="passport_no"></div>
+      <div><label>Passport expiry</label><input name="passport_expiry" type="date"></div>
+      <div><label>Nationality</label><input name="nationality"></div>
+      <div><label>Notes</label><input name="notes"></div>
+      <div><button class="btn" type="submit">Add traveler</button></div>
+    </form>
+  </details>
+
+  <h3 style="margin:22px 0 8px;font-size:15px;letter-spacing:.03em">Doc checklist</h3>
+  {% if not bdocs %}<p class="muted">No checklist items.</p>{% endif %}
+  {% for d in bdocs %}
+  <div class="row">
+    <div>
+      <strong>{{ d.label or d.doc_type }}</strong>
+      <div class="muted">{{ d.doc_type }}{% if d.notes %} · {{ d.notes }}{% endif %}</div>
+    </div>
+    <form class="inline" method="post" action="/docs/{{ d.id }}/status" style="display:flex;gap:6px;align-items:center">
+      <select name="status">
+        {% for s in doc_statuses %}
+        <option value="{{ s }}" {% if d.status==s %}selected{% endif %}>{{ s }}</option>
+        {% endfor %}
+      </select>
+      <button class="btn small" type="submit">Update</button>
+    </form>
+  </div>
+  {% endfor %}
+  <details style="margin-top:8px">
+    <summary class="muted" style="cursor:pointer">Add doc item</summary>
+    <form method="post" action="/bookings/{{ b.id }}/docs" class="form-grid" style="margin-top:10px">
+      <div><label>Type</label>
+        <select name="doc_type">
+          {% for dtype, dlabel in doc_types %}<option value="{{ dtype }}">{{ dlabel }}</option>{% endfor %}
+        </select>
+      </div>
+      <div><label>Label</label><input name="label" placeholder="optional override"></div>
+      <div><label>Traveler id</label>
+        <select name="traveler_id">
+          <option value="0">—</option>
+          {% for t in btravelers %}<option value="{{ t.id }}">{{ t.name }}</option>{% endfor %}
+        </select>
+      </div>
+      <div><label>Status</label>
+        <select name="status">{% for s in doc_statuses %}<option value="{{ s }}">{{ s }}</option>{% endfor %}</select>
+      </div>
+      <div><button class="btn" type="submit">Add doc</button></div>
+    </form>
+  </details>
+
+  <h3 style="margin:22px 0 8px;font-size:15px;letter-spacing:.03em">Hotels <span class="muted">(human approval)</span></h3>
+  {% if not bhotels %}<p class="muted">No hotels on this file yet.</p>{% endif %}
+  {% for h in bhotels %}
+  <div class="row">
+    <div>
+      <strong>{{ h.name or "Hotel TBD" }}{% if h.location %} · {{ h.location }}{% endif %}</strong>
+      <div class="muted">
+        {{ h.check_in or "—" }} → {{ h.check_out or "—" }} · {{ h.rooms or 1 }} room(s) · {{ h.room_type or "—" }}
+        · {{ h.cost_inr|money(h.currency or cur) }}
+        {% if h.confirmation_no %} · conf {{ h.confirmation_no }}{% endif %}
+        {% if h.notes %} · {{ h.notes }}{% endif %}
+      </div>
+      <div class="muted">
+        {% if h.human_approved %}<span class="pill ok">approved {{ h.approved_at }}</span>{% else %}<span class="pill late">pending approval</span>{% endif %}
+        {% if h.approval_note %} · {{ h.approval_note }}{% endif %}
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
+      <form class="inline" method="post" action="/hotels/{{ h.id }}/status" style="display:flex;gap:6px;align-items:center">
+        <select name="status">
+          {% for s in supplier_statuses %}
+          <option value="{{ s }}" {% if h.status==s %}selected{% endif %}>{{ s }}</option>
+          {% endfor %}
+        </select>
+        <button class="btn small" type="submit">Status</button>
+      </form>
+      {% if not h.human_approved %}
+      <form method="post" action="/hotels/{{ h.id }}/approve" style="display:flex;gap:6px;align-items:center">
+        <input type="hidden" name="human_approved" value="1">
+        <input name="approval_note" placeholder="approval note" style="width:140px">
+        <button class="btn small" type="submit">Approve</button>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
+  <details style="margin-top:8px">
+    <summary class="muted" style="cursor:pointer">Add hotel</summary>
+    <form method="post" action="/bookings/{{ b.id }}/hotels" class="form-grid" style="margin-top:10px">
+      <div><label>Name</label><input name="name" placeholder="Canaves / Ion / Marriott…"></div>
+      <div><label>Location</label><input name="location" placeholder="Santorini / Reykjavik"></div>
+      <div><label>Check-in</label><input name="check_in" type="date"></div>
+      <div><label>Check-out</label><input name="check_out" type="date"></div>
+      <div><label>Rooms</label><input name="rooms" type="number" value="1"></div>
+      <div><label>Room type</label><input name="room_type" placeholder="Deluxe / villa"></div>
+      <div><label>Cost ({{ cur }})</label><input name="cost_inr" type="number" value="0"></div>
+      <div><label>Currency</label>
+        <select name="currency">{% for c in currencies %}<option value="{{ c }}" {% if c==cur %}selected{% endif %}>{{ c }}</option>{% endfor %}</select>
+      </div>
+      <div><label>Status</label>
+        <select name="status">{% for s in supplier_statuses %}<option value="{{ s }}">{{ s }}</option>{% endfor %}</select>
+      </div>
+      <div><label>Confirmation no</label><input name="confirmation_no"></div>
+      <div><label>Notes</label><input name="notes"></div>
+      <div><button class="btn" type="submit">Add hotel</button></div>
+    </form>
+  </details>
+
+  <h3 style="margin:22px 0 8px;font-size:15px;letter-spacing:.03em">Ferries <span class="muted">(human approval)</span></h3>
+  {% if not bferries %}<p class="muted">No ferries on this file yet.</p>{% endif %}
+  {% for f in bferries %}
+  <div class="row">
+    <div>
+      <strong>{{ f.operator or "Ferry" }} · {{ f.from_port }} → {{ f.to_port }}</strong>
+      <div class="muted">
+        dep {{ f.depart_at or "—" }} · arr {{ f.arrive_at or "—" }} · {{ f.pax or "—" }} pax
+        · {{ f.cost_inr|money(f.currency or cur) }}
+        {% if f.ticket_ref %} · ticket {{ f.ticket_ref }}{% endif %}
+        {% if f.notes %} · {{ f.notes }}{% endif %}
+      </div>
+      <div class="muted">
+        {% if f.human_approved %}<span class="pill ok">approved {{ f.approved_at }}</span>{% else %}<span class="pill late">pending approval</span>{% endif %}
+        {% if f.approval_note %} · {{ f.approval_note }}{% endif %}
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
+      <form class="inline" method="post" action="/ferries/{{ f.id }}/status" style="display:flex;gap:6px;align-items:center">
+        <select name="status">
+          {% for s in supplier_statuses %}
+          <option value="{{ s }}" {% if f.status==s %}selected{% endif %}>{{ s }}</option>
+          {% endfor %}
+        </select>
+        <button class="btn small" type="submit">Status</button>
+      </form>
+      {% if not f.human_approved %}
+      <form method="post" action="/ferries/{{ f.id }}/approve" style="display:flex;gap:6px;align-items:center">
+        <input type="hidden" name="human_approved" value="1">
+        <input name="approval_note" placeholder="approval note" style="width:140px">
+        <button class="btn small" type="submit">Approve</button>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
+  <details style="margin-top:8px">
+    <summary class="muted" style="cursor:pointer">Add ferry</summary>
+    <form method="post" action="/bookings/{{ b.id }}/ferries" class="form-grid" style="margin-top:10px">
+      <div><label>Operator</label><input name="operator" placeholder="Seajets / Blue Star"></div>
+      <div><label>From</label><input name="from_port" placeholder="Santorini"></div>
+      <div><label>To</label><input name="to_port" placeholder="Mykonos"></div>
+      <div><label>Depart</label><input name="depart_at" type="datetime-local"></div>
+      <div><label>Arrive</label><input name="arrive_at" type="datetime-local"></div>
+      <div><label>Pax</label><input name="pax" type="number" value="{{ b.pax or 1 }}"></div>
+      <div><label>Cost ({{ cur }})</label><input name="cost_inr" type="number" value="0"></div>
+      <div><label>Currency</label>
+        <select name="currency">{% for c in currencies %}<option value="{{ c }}" {% if c==cur %}selected{% endif %}>{{ c }}</option>{% endfor %}</select>
+      </div>
+      <div><label>Status</label>
+        <select name="status">{% for s in supplier_statuses %}<option value="{{ s }}">{{ s }}</option>{% endfor %}</select>
+      </div>
+      <div><label>Ticket ref</label><input name="ticket_ref"></div>
+      <div><label>Notes</label><input name="notes"></div>
+      <div><button class="btn" type="submit">Add ferry</button></div>
+    </form>
+  </details>
+
+  <h3 style="margin:22px 0 8px;font-size:15px;letter-spacing:.03em">Flights</h3>
+  {% if not bflights %}<p class="muted">No flights on this file yet.</p>{% endif %}
+  {% for f in bflights %}
+  <div class="row">
+    <div>
+      <strong>{{ f.airline or "Airline" }} {{ f.flight_no }} · {{ f.from_airport }} → {{ f.to_airport }}</strong>
+      <div class="muted">
+        {{ f.direction }} · dep {{ f.depart_at or "—" }} · arr {{ f.arrive_at or "—" }}
+        · {{ f.pax or "—" }} pax · PNR {{ f.pnr or "—" }} · {{ f.cost_inr|money(cur) }}
+        {% if f.notes %} · {{ f.notes }}{% endif %}
+      </div>
+    </div>
+    <form class="inline" method="post" action="/flights/{{ f.id }}/status" style="display:flex;gap:6px;align-items:center">
+      <select name="status">
+        {% for s in flight_statuses %}
+        <option value="{{ s }}" {% if f.status==s %}selected{% endif %}>{{ s }}</option>
+        {% endfor %}
+      </select>
+      <button class="btn small" type="submit">Update</button>
+    </form>
+  </div>
+  {% endfor %}
+  <details style="margin-top:8px">
+    <summary class="muted" style="cursor:pointer">Add flight</summary>
+    <form method="post" action="/bookings/{{ b.id }}/flights" class="form-grid" style="margin-top:10px">
+      <div><label>Direction</label>
+        <select name="direction">
+          {% for d in flight_directions %}<option value="{{ d }}">{{ d }}</option>{% endfor %}
+        </select>
+      </div>
+      <div><label>Airline</label><input name="airline" placeholder="Delta / United / Icelandair…"></div>
+      <div><label>Flight no</label><input name="flight_no" placeholder="BA 143"></div>
+      <div><label>From</label><input name="from_airport" placeholder="LHR / BOS / SFO"></div>
+      <div><label>To</label><input name="to_airport" placeholder="HNL / JFK / KEF / ATH"></div>
+      <div><label>Depart</label><input name="depart_at" type="datetime-local"></div>
+      <div><label>Arrive</label><input name="arrive_at" type="datetime-local"></div>
+      <div><label>Pax</label><input name="pax" type="number" value="{{ b.pax or 1 }}"></div>
+      <div><label>PNR</label><input name="pnr" placeholder="ABC123"></div>
+      <div><label>Cost ({{ cur }})</label><input name="cost_inr" type="number" value="0"></div>
+      <div><label>Status</label>
+        <select name="status">
+          {% for s in flight_statuses %}<option value="{{ s }}">{{ s }}</option>{% endfor %}
+        </select>
+      </div>
+      <div><label>Notes</label><input name="notes" placeholder="cost / hold / connect notes"></div>
+      <div><button class="btn" type="submit">Add flight</button></div>
+    </form>
+  </details>
+
+  <h3 style="margin:22px 0 8px;font-size:15px;letter-spacing:.03em">Cabs</h3>
+  {% if not bcabs %}<p class="muted">No cabs on this file yet.</p>{% endif %}
+  {% for c in bcabs %}
+  <div class="row">
+    <div>
+      <strong>{{ c.from_place }} → {{ c.to_place }}</strong>
+      <div class="muted">
+        {{ c.when_at or "—" }} · {{ c.vehicle or "vehicle TBD" }}
+        · {{ c.vendor or "vendor TBD" }}{% if c.driver_phone %} · {{ c.driver_phone }}{% endif %}
+        · {{ c.cost_inr|money(cur) }}{% if c.notes %} · {{ c.notes }}{% endif %}
+      </div>
+    </div>
+    <form class="inline" method="post" action="/cabs/{{ c.id }}/status" style="display:flex;gap:6px;align-items:center">
+      <select name="status">
+        {% for s in cab_statuses %}
+        <option value="{{ s }}" {% if c.status==s %}selected{% endif %}>{{ s }}</option>
+        {% endfor %}
+      </select>
+      <button class="btn small" type="submit">Update</button>
+    </form>
+  </div>
+  {% endfor %}
+  <details style="margin-top:8px">
+    <summary class="muted" style="cursor:pointer">Add cab</summary>
+    <form method="post" action="/bookings/{{ b.id }}/cabs" class="form-grid" style="margin-top:10px">
+      <div><label>When</label><input name="when_at" type="datetime-local"></div>
+      <div><label>From</label><input name="from_place" placeholder="Airport / hotel"></div>
+      <div><label>To</label><input name="to_place" placeholder="Hotel / ferry terminal"></div>
+      <div><label>Vehicle</label><input name="vehicle" placeholder="Sedan / MPV / van"></div>
+      <div><label>Vendor</label><input name="vendor" placeholder="Local transfer desk"></div>
+      <div><label>Driver phone</label><input name="driver_phone" placeholder="+country …"></div>
+      <div><label>Cost ({{ cur }})</label><input name="cost_inr" type="number" value="0"></div>
+      <div><label>Status</label>
+        <select name="status">
+          {% for s in cab_statuses %}<option value="{{ s }}">{{ s }}</option>{% endfor %}
+        </select>
+      </div>
+      <div><label>Notes</label><input name="notes" placeholder="meet-and-greet / wait time"></div>
+      <div><button class="btn" type="submit">Add cab</button></div>
+    </form>
+  </details>
+</div>
+{% endfor %}
+{% endblock %}

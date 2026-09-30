@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Sample Tour Agency - Hawaii Honeymoon - 5N/6D</title>
+<style>
+  @page { size: A4; margin: 12mm 12mm 14mm; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font: 11.5px/1.45 "Iowan Old Style", Palatino, Georgia, serif;
+    color: #1c2430;
+    background: #fff;
+  }
+  h1,h2,h3 { font-weight: 700; margin: 0; }
+  .cover {
+    min-height: 262mm;
+    background: #0f2a3a;
+    color: #f4ead8;
+    padding: 22mm 16mm 16mm;
+    page-break-after: always;
+    position: relative;
+  }
+  .eyebrow { letter-spacing: .22em; font-size: 10px; text-transform: uppercase; color: #d4b36a; }
+  .cover h1 { font-size: 42px; line-height: 1.05; margin: 18px 0 8px; color: #fff; }
+  .cover h1 em { font-style: italic; color: #d4b36a; font-weight: 500; }
+  .tagline { font-size: 16px; color: #d7cbb6; max-width: 440px; margin-bottom: 28px; }
+  .meta { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 24px; margin-top: 28px; max-width: 480px; }
+  .meta div { border-top: 1px solid #3a4d56; padding-top: 8px; }
+  .meta b { display: block; font-size: 13px; color: #fff; }
+  .meta span { color: #b7c2b8; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
+  .addr { position: absolute; bottom: 16mm; left: 16mm; right: 16mm; font-size: 11px; color: #c9b99a; }
+  .addr strong { color: #f4ead8; }
+  .page { padding: 2mm 2mm 0; page-break-after: always; }
+  .page.last { page-break-after: auto; }
+  header.bar {
+    display: flex; justify-content: space-between; align-items: baseline;
+    border-bottom: 2px solid #0f2a3a; padding-bottom: 8px; margin-bottom: 14px;
+  }
+  header.bar .who { font-size: 13px; }
+  header.bar .who span { color: #7a6a4e; }
+  .plan { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 0 0 16px; }
+  .plan article {
+    background: #f6f1e8; border: 1px solid #e4d7c0; border-radius: 8px; padding: 10px 12px;
+  }
+  .plan em { font-style: normal; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: #7a6a4e; }
+  .plan b { display: block; font-size: 14px; margin-top: 2px; }
+  table.sum { width: 100%; border-collapse: collapse; margin: 8px 0 16px; }
+  table.sum th { text-align: left; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: #7a6a4e; padding: 6px 8px; border-bottom: 1px solid #d9ccb6; }
+  table.sum td { padding: 7px 8px; border-bottom: 1px solid #eee4d4; vertical-align: top; }
+  table.sum tr td:first-child { font-weight: 700; white-space: nowrap; width: 70px; }
+  .day { break-inside: avoid; margin: 0 0 12px; padding: 0 0 12px; border-bottom: 1px dashed #e0d3bd; }
+  .day h3 { font-size: 15px; margin-bottom: 4px; }
+  .day .when { font-size: 10.5px; color: #5e6a62; letter-spacing: .04em; text-transform: uppercase; margin-bottom: 6px; }
+  .day p { margin: 0 0 6px; }
+  .day ul { margin: 4px 0 0; padding-left: 16px; }
+  .day li { margin: 0 0 3px; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .box { background: #f7f2e9; border-radius: 8px; padding: 12px 14px; }
+  .box h3 { font-size: 13px; margin-bottom: 8px; }
+  .box ul { margin: 0; padding-left: 16px; }
+  .box li { margin: 0 0 4px; }
+  .price { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin: 12px 0 16px; }
+  .price div { border: 1px solid #e4d7c0; border-radius: 8px; padding: 10px; text-align: center; }
+  .price b { display: block; font-size: 18px; }
+  .price span { font-size: 10px; color: #7a6a4e; letter-spacing: .08em; text-transform: uppercase; }
+  .note { font-size: 10.5px; color: #5e6a62; }
+  .acts { width: 100%; border-collapse: collapse; font-size: 11px; }
+  .acts th { text-align: left; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: #7a6a4e; padding: 5px 6px; border-bottom: 1px solid #d9ccb6; }
+  .acts td { padding: 5px 6px; border-bottom: 1px solid #eee4d4; }
+  footer.tiny { margin-top: 14px; font-size: 10px; color: #7a6a4e; border-top: 1px solid #e4d7c0; padding-top: 8px; }
+</style>
+</head>
+<body>
+<section class="cover">
+  <div class="eyebrow">Sample Tour Agency · Routebook demo itinerary</div>
+  <h1>Hawaii<br><em>Honeymoon</em></h1>
+  <p class="tagline">5 nights / 6 days across Oahu and Maui. Waikiki welcome, North Shore surf towns, then Kaʻanapali sunsets and a Road to Hana day.</p>
+  <div class="meta">
+    <div><span>Stay plan</span><b>2N Waikiki · 3N Kaʻanapali, Maui</b></div>
+    <div><span>From</span><b>$2,499 per couple</b></div>
+    <div><span>Flights (inter-island)</span><b>HNL → OGG included (coach)</b></div>
+    <div><span>Transfers</span><b>Private sedan / SUV</b></div>
+    <div><span>Best for</span><b>Honeymoon &amp; couples</b></div>
+    <div><span>Source</span><b>Routebook demo catalog</b></div>
+  </div>
+  <div class="addr">
+    <strong>Sample Tour Agency</strong> · 100 Demo Plaza, Suite 4, Honolulu, HI 96815<br>
+    Desk +1 (808) 555-0142 · hello@sampletour.example · routebook.demo
+  </div>
+</section>
+
+<section class="page">
+  <header class="bar">
+    <div class="who">Sample Tour Agency <span>Hawaii</span></div>
+    <div class="eyebrow">Guest itinerary</div>
+  </header>
+  <div class="plan">
+    <article><em>Nights 1–2</em><b>Waikiki, Oahu</b>Beachfront · city + North Shore</article>
+    <article><em>Nights 3–5</em><b>Kaʻanapali, Maui</b>West Maui · sunsets + Hana</article>
+    <article><em>Day 6</em><b>Depart OGG</b>Breakfast and airport drop</article>
+  </div>
+  <table class="sum">
+    <tr><th>Day</th><th>Where</th><th>What you do</th></tr>
+    <tr><td>1</td><td>Waikiki</td><td>HNL arrival, resort check-in, sunset sail off Waikiki</td></tr>
+    <tr><td>2</td><td>Oahu</td><td>North Shore loop — Haleiwa, Waimea, sunset at Lanikai overlook</td></tr>
+    <tr><td>3</td><td>Maui</td><td>Inter-island flight, Kaʻanapali check-in, beach afternoon</td></tr>
+    <tr><td>4</td><td>Maui</td><td>Road to Hana day with picnic stops and waterfall walks</td></tr>
+    <tr><td>5</td><td>Maui</td><td>Free morning; sunset catamaran from Kaʻanapali</td></tr>
+    <tr><td>6</td><td>Departure</td><td>Breakfast and private transfer to Kahului (OGG)</td></tr>
+  </table>
+
+  <article class="day">
+    <div class="when">Day 1 · Waikiki (Oahu)</div>
+    <h3>Arrival, resort welcome, sunset sail</h3>
+    <p>Land at Daniel K. Inouye International (HNL). A Sample Tour Agency host meets you curbside and transfers you to a Waikiki beachfront resort. Afternoon at leisure — pool, sand, or a short walk along Kalakaua Avenue.</p>
+    <ul>
+      <li><b>Resort check-in</b> — ocean-view or partial-ocean room, double occupancy, as confirmed.</li>
+      <li><b>Welcome amenity</b> — light tropical snack and sparkling cider in-room.</li>
+      <li><b>Sunset sail</b> — 90-minute catamaran off Waikiki; soft drinks included. Overnight Waikiki.</li>
+    </ul>
+  </article>
+
+  <article class="day">
+    <div class="when">Day 2 · Oahu circle day</div>
+    <h3>North Shore towns and windward lookouts</h3>
+    <p>Private driver for a relaxed island day. Coffee stop in Haleiwa, photo time at Waimea Bay (swim only when conditions allow), pineapple stand, then windward lookouts before returning to Waikiki. Overnight Waikiki.</p>
+  </article>
+
+  <article class="day">
+    <div class="when">Day 3 · Fly to Maui</div>
+    <h3>Inter-island hop, Kaʻanapali beach time</h3>
+    <p>Morning transfer to HNL, short flight to Kahului (OGG), then private transfer to a Kaʻanapali resort. Afternoon free on the beach path — swim, stroll, or spa add-on. Overnight Kaʻanapali.</p>
+  </article>
+</section>
+
+<section class="page">
+  <header class="bar">
+    <div class="who">Sample Tour Agency <span>Hawaii</span></div>
+    <div class="eyebrow">Days 4 to 6 · inclusions</div>
+  </header>
+
+  <article class="day">
+    <div class="when">Day 4 · Road to Hana</div>
+    <h3>Waterfalls, black sand, picnic lunch</h3>
+    <p>Early start with a guided Road to Hana day (small group or private, as booked). Expect rainforest tunnels, roadside falls, a black-sand beach stop, and a packed picnic. Return to Kaʻanapali by early evening. Overnight Kaʻanapali.</p>
+  </article>
+
+  <article class="day">
+    <div class="when">Day 5 · Kaʻanapali leisure</div>
+    <h3>Free morning, sunset catamaran</h3>
+    <p>Morning at leisure — beach, pool, or optional snorkel at Black Rock (paid extras listed below). Late-afternoon sunset catamaran with light pupus and soft drinks. Final night on Maui.</p>
+  </article>
+
+  <article class="day">
+    <div class="when">Day 6 · Departure</div>
+    <h3>Breakfast and airport transfer</h3>
+    <p>Resort breakfast, then a timed private drop to Kahului Airport (OGG) for your mainland or onward flight.</p>
+  </article>
+
+  <div class="price">
+    <div><span>Boutique / 3-star</span><b>$2,499</b>per couple</div>
+    <div><span>4-star resorts</span><b>$3,299</b>per couple</div>
+    <div><span>Luxury / 5-star</span><b>$4,799</b>per couple</div>
+  </div>
+  <p class="note">Sample Tour Agency demo tariff for Routebook. Minimum two adults. Seasonal holiday surcharges of 10–35% may apply (Dec 20–Jan 5, Presidents’ Week). Mainland flights to/from Hawaii are extra. 40% deposit to confirm; balance 21 days before arrival.</p>
+
+  <div class="two">
+    <div class="box">
+      <h3>Included</h3>
+      <ul>
+        <li>Hotels, double occupancy, as per chosen category</li>
+        <li>Daily breakfast</li>
+        <li>Private airport / resort transfers on Oahu and Maui</li>
+        <li>One-way inter-island airfare HNL→OGG (coach)</li>
+        <li>Waikiki sunset sail; Maui sunset catamaran</li>
+        <li>Guided Road to Hana day with picnic</li>
+        <li>Taxes &amp; resort fees on listed stays</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3>Not included</h3>
+      <ul>
+        <li>Mainland / international flights to Hawaii</li>
+        <li>Lunch, dinner, laundry, alcoholic drinks</li>
+        <li>Optional water sports and spa (see table)</li>
+        <li>Travel insurance (recommended)</li>
+        <li>Anything off this itinerary</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="page last">
+  <header class="bar">
+    <div class="who">Sample Tour Agency <span>Hawaii</span></div>
+    <div class="eyebrow">Add-ons · how to book</div>
+  </header>
+  <h2 style="font-size:16px;margin:0 0 8px">Optional activities (tag prices, per person unless noted)</h2>
+  <table class="acts">
+    <tr><th>Activity</th><th>Tag price</th><th>Notes</th></tr>
+    <tr><td>Intro scuba (shore)</td><td>$189</td><td>Maui or Oahu</td></tr>
+    <tr><td>Molokini snorkel cruise</td><td>$145</td><td>Breakfast or lunch boat</td></tr>
+    <tr><td>Helicopter circle (Maui)</td><td>$329</td><td>Doors-off upgrade extra</td></tr>
+    <tr><td>Couples spa 60 min</td><td>$280</td><td>Per couple</td></tr>
+    <tr><td>Private dinner on beach</td><td>$450</td><td>Per couple, set menu</td></tr>
+    <tr><td>Surfing lesson (2 hr)</td><td>$120</td><td>Waikiki or Maui</td></tr>
+    <tr><td>Pearl Harbor / Arizona tour</td><td>$89</td><td>Oahu day add-on</td></tr>
+    <tr><td>Honeymoon cake</td><td>$65–95</td><td>Half sheet, flavour varies</td></tr>
+  </table>
+  <p class="note">Confirm rates at booking. Season and operator allotment move these numbers.</p>
+
+  <div class="two" style="margin-top:14px">
+    <div class="box">
+      <h3>To confirm</h3>
+      <ul>
+        <li>Share travel dates, pax, hotel category</li>
+        <li>Passport or REAL ID for every guest</li>
+        <li>Mainland flight numbers and times</li>
+        <li>Mobile of the lead guest</li>
+        <li>40% deposit; send transfer proof</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3>Desk</h3>
+      <p style="margin:0 0 6px">100 Demo Plaza, Suite 4, Honolulu, HI 96815</p>
+      <p style="margin:0 0 6px">Bookings +1 (808) 555-0142<br>Reservations +1 (808) 555-0198</p>
+      <p style="margin:0">hello@sampletour.example<br>reservations@sampletour.example<br>routebook.demo</p>
+    </div>
+  </div>
+  <footer class="tiny">
+    Itinerary compiled as a Sample Tour Agency / Routebook demo package (Hawaii Honeymoon 5N/6D). Hotel names are allotted at confirmation. Inter-island flights and boat operators are subject to schedule. This is a quotation sheet, not an airline ticket.
+  </footer>
+</section>
+</body>
+</html>

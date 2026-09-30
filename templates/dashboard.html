@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% block title %}Desk{% endblock %}
+{% block body %}
+<h1>Front desk</h1>
+<p class="sub">Leads, payments, hotels/ferries (human lock), docs, and follow-ups — domestic and international.</p>
+<div class="grid">
+  {% for s,c in stages.items() %}
+  <div class="stat"><b>{{ c }}</b><span>{{ s }}</span></div>
+  {% endfor %}
+  <div class="stat"><b style="font-size:18px">{{ outstanding }}</b><span>Due on bookings</span></div>
+  <div class="stat"><b>{{ open_flights }}</b><span>Open flights</span></div>
+  <div class="stat"><b>{{ open_cabs }}</b><span>Open cabs</span></div>
+  <div class="stat"><b>{{ missing_docs }}</b><span>Missing docs</span></div>
+  <div class="stat"><b>{{ pending_approvals }}</b><span>Pending approvals</span></div>
+</div>
+
+<div class="card">
+  <h2>Desk reports</h2>
+  <p class="muted" style="margin-top:0">Conversion by stage · open balances by currency · docs &amp; human approvals. No FX.</p>
+  <h3 style="margin:14px 0 8px;font-size:14px;letter-spacing:.04em;color:var(--muted);text-transform:uppercase">Balance due</h3>
+  {% if not balance_due %}<p class="muted">All bookings settled.</p>{% endif %}
+  {% for b in balance_due %}
+  {% set due = b.quoted_inr - b.paid %}
+  <div class="row">
+    <div>
+      <strong>{{ b.ref }} · {{ b.package_name or "Custom" }}</strong>
+      <div class="muted">due {{ due|money(b.currency or 'USD') }} · paid {{ b.paid|money(b.currency or 'USD') }} of {{ b.quoted_inr|money(b.currency or 'USD') }}</div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <a class="btn small ghost" href="/bookings/{{ b.id }}/draft?kind=balance">Draft chase</a>
+      <form class="inline" method="post" action="/bookings/{{ b.id }}/followup-balance"><button class="btn small" type="submit">+ Follow-up</button></form>
+    </div>
+  </div>
+  {% endfor %}
+  <h3 style="margin:18px 0 8px;font-size:14px;letter-spacing:.04em;color:var(--muted);text-transform:uppercase">Pending hotel / ferry approvals</h3>
+  {% if not pending_hotels and not pending_ferries %}<p class="muted">Nothing waiting on human lock.</p>{% endif %}
+  {% for h in pending_hotels %}
+  <div class="row">
+    <div>
+      <strong>Hotel · {{ h.name or "TBD" }}</strong>
+      <div class="muted">{{ h.ref }} · {{ h.location or "—" }} · {{ h.status }} · {{ h.cost_inr|money(h.currency or 'USD') }}</div>
+    </div>
+    <span class="pill late">needs approval</span>
+  </div>
+  {% endfor %}
+  {% for f in pending_ferries %}
+  <div class="row">
+    <div>
+      <strong>Ferry · {{ f.operator or "Operator" }} {{ f.from_port }} → {{ f.to_port }}</strong>
+      <div class="muted">{{ f.ref }} · {{ f.status }} · {{ f.cost_inr|money(f.currency or 'USD') }}</div>
+    </div>
+    <span class="pill late">needs approval</span>
+  </div>
+  {% endfor %}
+</div>
+
+<div class="card">
+  <h2>Follow-ups</h2>
+  {% if not followups %}<p class="muted">Nothing pending.</p>{% endif %}
+  {% for f in followups %}
+  <div class="row">
+    <div>
+      <strong>{{ f.title }}</strong>
+      <div class="muted">{{ f.lead_name or "—" }} · due {{ f.due_on }}
+        {% if f.due_on < today %}<span class="pill late">overdue</span>{% endif %}
+      </div>
+    </div>
+    <form class="inline" method="post" action="/followups/{{ f.id }}/done"><button class="btn small">Done</button></form>
+  </div>
+  {% endfor %}
+  <form method="post" action="/followups" class="form-grid" style="margin-top:14px">
+    <div><label>New follow-up</label><input name="title" required placeholder="Call client about visa"></div>
+    <div><label>Due</label><input type="date" name="due_on" value="{{ today }}" required></div>
+    <div><label>Lead id (optional)</label><input name="lead_id" type="number" value="0"></div>
+    <div><label>Booking id (optional)</label><input name="booking_id" type="number" value="0"></div>
+    <div><button class="btn" type="submit">Add</button></div>
+  </form>
+</div>
+<div class="card">
+  <h2>Transport desk</h2>
+  <p class="muted" style="margin-top:0">Open flights = not Ticketed/Cancelled · open cabs = not Confirmed/Done/Cancelled.</p>
+  <h3 style="margin:14px 0 8px;font-size:14px;letter-spacing:.04em;color:var(--muted);text-transform:uppercase">Upcoming flight legs</h3>
+  {% if not upcoming_legs %}<p class="muted">No upcoming flights.</p>{% endif %}
+  {% for f in upcoming_legs %}
+  <div class="row">
+    <div>
+      <strong>{{ f.airline }} {{ f.flight_no }} · {{ f.from_airport }} → {{ f.to_airport }}</strong>
+      <div class="muted">{{ f.ref }} · {{ f.traveller or "Guest" }} · {{ f.direction }} · dep {{ f.depart_at }}{% if f.pnr %} · PNR {{ f.pnr }}{% endif %}</div>
+    </div>
+    <span class="pill {% if f.status=='Ticketed' %}ok{% elif f.status in ['Inquiry','Quoted'] %}late{% endif %}">{{ f.status }}</span>
+  </div>
+  {% endfor %}
+  <h3 style="margin:18px 0 8px;font-size:14px;letter-spacing:.04em;color:var(--muted);text-transform:uppercase">Upcoming cabs</h3>
+  {% if not upcoming_cabs %}<p class="muted">No upcoming cabs.</p>{% endif %}
+  {% for c in upcoming_cabs %}
+  <div class="row">
+    <div>
+      <strong>{{ c.from_place }} → {{ c.to_place }}</strong>
+      <div class="muted">{{ c.ref }} · {{ c.traveller or "Guest" }} · {{ c.when_at }} · {{ c.vehicle or "—" }}{% if c.vendor %} · {{ c.vendor }}{% endif %}</div>
+    </div>
+    <span class="pill {% if c.status in ['Confirmed','Done'] %}ok{% elif c.status in ['Needed','Quoted'] %}late{% endif %}">{{ c.status }}</span>
+  </div>
+  {% endfor %}
+</div>
+<div class="card">
+  <h2>Upcoming travel</h2>
+  {% if not upcoming %}<p class="muted">No upcoming dates.</p>{% endif %}
+  {% for b in upcoming %}
+  <div class="row">
+    <div>
+      <strong>{{ b.ref }} · {{ b.package_name or "Custom" }}</strong>
+      <div class="muted">{{ b.travel_from }} → {{ b.travel_to }} · {{ b.pax }} pax · paid {{ b.paid|money(b.currency or 'USD') }} of {{ b.quoted_inr|money(b.currency or 'USD') }}</div>
+    </div>
+    <span class="pill ok">{{ b.status }}</span>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Guests{% endblock %}
+{% block body %}
+<h1>Guests</h1>
+<p class="sub">Nationality, passport, and visa dates sit here so you can chase them before travel — domestic or international.</p>
+<table>
+<tr><th>Name</th><th>Phone</th><th>City</th><th>Nationality</th><th>Passport</th><th>Visa</th><th>Notes</th></tr>
+{% for c in customers %}
+<tr>
+  <td>{{ c.name }}</td>
+  <td>{{ c.phone }}</td>
+  <td>{{ c.city or "—" }}</td>
+  <td>{{ c.nationality or "—" }}</td>
+  <td>{{ c.passport_expiry or "—" }}</td>
+  <td>{{ c.visa_expiry or "—" }}</td>
+  <td class="muted">{{ c.notes }}</td>
+</tr>
+{% endfor %}
+</table>
+<div class="card" style="margin-top:20px">
+  <h2>Add guest</h2>
+  <form method="post" action="/customers" class="form-grid">
+    <div><label>Name</label><input name="name" required></div>
+    <div><label>Phone</label><input name="phone" placeholder="+country …"></div>
+    <div><label>Email</label><input name="email" type="email"></div>
+    <div><label>City</label><input name="city" placeholder="London / Dubai / Bengaluru…"></div>
+    <div><label>Nationality</label><input name="nationality" placeholder="United Kingdom / United States / …"></div>
+    <div><label>Passport expiry</label><input name="passport_expiry" type="date"></div>
+    <div><label>Visa expiry</label><input name="visa_expiry" type="date"></div>
+    <div style="grid-column:1/-1"><label>Notes</label><input name="notes" style="width:100%"></div>
+    <div><button class="btn" type="submit">Save guest</button></div>
+  </form>
+</div>
+{% endblock %}

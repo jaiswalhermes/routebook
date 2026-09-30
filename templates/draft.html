@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Draft · {{ draft.kind }}{% endblock %}
+{% block body %}
+<h1>Message draft</h1>
+<p class="sub">Copyable WhatsApp/email text — no send. File {{ draft.booking.ref }}.</p>
+<div class="card">
+  <div class="row">
+    <div>
+      <strong>{{ draft.subject }}</strong>
+      <div class="muted">Channel {{ draft.channel }} · To {{ draft.to or "—" }} · kind {{ draft.kind }}</div>
+    </div>
+    <div style="display:flex;gap:8px">
+      {% for k in draft_kinds %}
+      <a class="btn small {% if k!=draft.kind %}ghost{% endif %}" href="/bookings/{{ draft.booking.id }}/draft?kind={{ k }}">{{ k }}</a>
+      {% endfor %}
+    </div>
+  </div>
+  <label>Draft body</label>
+  <textarea id="draftbody" rows="14" style="width:100%;font:inherit;padding:12px;border:1px solid #d7cbb8;border-radius:8px;background:#fff">{{ draft.body }}</textarea>
+  <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
+    <button class="btn" type="button" onclick="navigator.clipboard.writeText(document.getElementById('draftbody').value)">Copy to clipboard</button>
+    <a class="btn ghost" href="/bookings/{{ draft.booking.id }}/draft.txt?kind={{ draft.kind }}">Plain text</a>
+    <a class="btn ghost" href="/bookings">← Bookings</a>
+  </div>
+</div>
+{% endblock %}

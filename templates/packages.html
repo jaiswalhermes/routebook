@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Packages{% endblock %}
+{% block body %}
+<h1>Packages</h1>
+<p class="sub">Sellable products. Seed rows are a <strong>sample</strong> Western markets catalog (Hawaii, California, Iceland, Greece, NYC) — replace with your packages. Price currency is selectable per package.</p>
+<table>
+<tr><th>Name</th><th>Where</th><th>Nights</th><th>From</th><th>Highlights</th></tr>
+{% for p in packages %}
+<tr>
+  <td>{{ p.name }}</td>
+  <td>{{ p.destination }}</td>
+  <td>{{ p.nights }}N / {{ p.days }}D</td>
+  <td>{{ p.price_inr|money(p.currency or 'USD') }}</td>
+  <td class="muted">{{ p.highlights }}</td>
+</tr>
+{% endfor %}
+</table>
+<div class="card" style="margin-top:20px">
+  <h2>Add package</h2>
+  <form method="post" action="/packages" class="form-grid">
+    <div><label>Name</label><input name="name" required></div>
+    <div><label>Destination</label><input name="destination" placeholder="Hawaii / Iceland / Greece / …"></div>
+    <div><label>Nights</label><input type="number" name="nights" value="4"></div>
+    <div><label>Days</label><input type="number" name="days" value="5"></div>
+    <div><label>Price (amount)</label><input type="number" name="price_inr" value="2500"></div>
+    <div><label>Currency</label>
+      <select name="currency">
+        {% for c in currencies %}<option value="{{ c }}" {% if c==(default_currency or 'USD') %}selected{% endif %}>{{ c }}</option>{% endfor %}
+      </select>
+    </div>
+    <div style="grid-column:1/-1"><label>Highlights</label><input name="highlights" style="width:100%"></div>
+    <div><button class="btn">Save</button></div>
+  </form>
+</div>
+{% endblock %}

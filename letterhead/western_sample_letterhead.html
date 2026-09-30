@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Sample Tour Agency - Dummy Itinerary (Hawaii Honeymoon)</title>
+<style>
+  @page { size: A4; margin: 8mm 8mm 10mm; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11px;
+    color: #111;
+    background: #fff;
+  }
+  .sheet { page-break-after: always; position: relative; min-height: 270mm; padding-bottom: 16mm; }
+  .sheet.last { page-break-after: auto; }
+  .lh {
+    display: flex; align-items: center; gap: 14px;
+    border-bottom: 3px solid #0b3a6e; padding: 8px 4px 10px; margin-bottom: 8px;
+  }
+  .lh .mark {
+    width: 52px; height: 52px; border-radius: 10px;
+    background: linear-gradient(145deg, #0b3a6e, #0089a3);
+    color: #fff; display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 18px; letter-spacing: .04em; flex-shrink: 0;
+  }
+  .lh .who strong { display: block; font-size: 15px; color: #0b3a6e; }
+  .lh .who span { color: #555; font-size: 10.5px; }
+  .lh .contact { margin-left: auto; text-align: right; font-size: 10px; color: #333; line-height: 1.4; }
+  .foot {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    border: 1px solid #111;
+    text-align: center;
+    padding: 5px 8px;
+    font-size: 11px;
+  }
+  .meta { text-align: center; margin: 6px 0 4px; font-size: 12px; }
+  .meta b { font-size: 12.5px; }
+  .red { color: #c41212; }
+  .hero {
+    background: #eef6fa; border: 1px solid #b7d4e2; border-radius: 8px;
+    padding: 14px 16px; margin: 8px 0 12px; text-align: center;
+  }
+  .hero h2 { margin: 0 0 4px; font-size: 16px; color: #0b3a6e; }
+  .hero p { margin: 0; color: #355; font-size: 11.5px; }
+  table.grid { width: 100%; border-collapse: collapse; margin: 0 0 12px; font-size: 11px; }
+  table.grid th, table.grid td { border: 1px solid #222; padding: 5px 7px; vertical-align: top; }
+  table.grid th { background: #1a4f9c; color: #fff; font-weight: 700; text-align: left; }
+  table.grid td.place { font-weight: 700; width: 22%; }
+  table.grid .room { color: #c41212; font-weight: 700; }
+  table.cost td:last-child { text-align: right; }
+  .final td { color: #c41212; font-weight: 800; }
+  .titlebox {
+    border: 1px solid #111;
+    text-align: center;
+    font-weight: 800;
+    font-size: 13px;
+    padding: 6px;
+    margin: 8px 0 10px;
+    letter-spacing: .02em;
+  }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .day h3 { font-size: 12px; margin: 0 0 4px; text-transform: uppercase; text-decoration: underline; }
+  .day ul { margin: 0 0 12px; padding-left: 16px; color: #1a4a8c; }
+  .day li { margin: 0 0 3px; }
+  .round {
+    border: 1px solid #111;
+    border-radius: 12px;
+    padding: 10px 12px;
+    margin: 0 0 12px;
+  }
+  .round h3 { margin: 0 0 6px; font-size: 13px; }
+  .round ul { margin: 0; padding-left: 16px; }
+  .round li { margin: 0 0 4px; }
+  .pink { color: #c4125a; font-weight: 700; }
+  h4 { margin: 12px 0 6px; font-size: 13px; text-decoration: underline; }
+  ol { margin: 0 0 10px; padding-left: 18px; }
+  ol li { margin: 0 0 4px; }
+  .paybox {
+    background: #f7f7f7; border: 1px dashed #888; border-radius: 8px;
+    padding: 12px 14px; margin: 8px 0 12px; font-size: 11.5px;
+  }
+  .paybox h3 { margin: 0 0 6px; font-size: 13px; color: #0b3a6e; }
+</style>
+</head>
+<body>
+<section class="sheet">
+  <div class="lh">
+    <div class="mark">STA</div>
+    <div class="who">
+      <strong>Sample Tour Agency</strong>
+      <span>Routebook demo letterhead · Western markets</span>
+    </div>
+    <div class="contact">
+      100 Demo Plaza, Suite 4, Honolulu, HI 96815<br>
+      +1 (808) 555-0142 · hello@sampletour.example
+    </div>
+  </div>
+  <p class="meta">Quotation ID: <b>QTN/DEMO/2026/HI-01</b> &nbsp;|&nbsp; Customer Name: <b>SAMPLE GUEST</b> &nbsp;|&nbsp; Mobile: <b>+1 (555) 010-2000</b></p>
+  <p class="meta">Itinerary For: <span class="red"><b>5</b></span> Nights &amp; <span class="red"><b>6</b></span> Days Tour Plan | 02 Adults | Arr : 12-10-2026 | Dep : 17-10-2026</p>
+  <div class="hero">
+    <h2>Hawaii Honeymoon — Oahu + Maui</h2>
+    <p>2N Waikiki · 3N Kaʻanapali · inter-island flight · sunset sails · Road to Hana</p>
+  </div>
+
+  <table class="grid">
+    <tr>
+      <th>PLACES</th>
+      <th>PACKAGE TYPE - COUPLE</th>
+      <th>NO. OF ROOM</th>
+      <th>NO. OF NIGHT</th>
+      <th>EXTRA BED</th>
+      <th>CHILD</th>
+    </tr>
+    <tr>
+      <td class="place">Waikiki, Oahu</td>
+      <td>Demo Beach Hotel Waikiki<br><span class="room">Room : Partial Ocean View</span></td>
+      <td>1</td><td>2</td><td>0</td><td>0</td>
+    </tr>
+    <tr>
+      <td class="place">Kaʻanapali, Maui</td>
+      <td>Demo Kaʻanapali Resort<br><span class="room">Room : Garden / Pool View</span></td>
+      <td>1</td><td>3</td><td>0</td><td>0</td>
+    </tr>
+  </table>
+
+  <table class="grid cost">
+    <tr>
+      <th>PACKAGE COST WITH BREAKUP</th>
+      <th>PACKAGE TYPE - COUPLE (USD)</th>
+    </tr>
+    <tr><td>Selected Hotel Cost</td><td>1,680.00</td></tr>
+    <tr><td>Inter-island Flights (HNL→OGG ×2)</td><td>320.00</td></tr>
+    <tr><td>Transfers + Road to Hana + Sails</td><td>780.00</td></tr>
+    <tr><td>Package Subtotal</td><td>2,780.00</td></tr>
+    <tr><td>Demo Discount</td><td>180.00</td></tr>
+    <tr><td>Cost After Discount</td><td>2,600.00</td></tr>
+    <tr><td>Agency Service Charge (6%)</td><td>156.00</td></tr>
+    <tr><td>Taxes &amp; Fees (est.)</td><td>208.00</td></tr>
+    <tr class="final"><td>Package Final Cost</td><td>2,964.00</td></tr>
+    <tr><td>Per Adult Cost (2 ADL)</td><td>1,482.00</td></tr>
+    <tr><td>Child Cost</td><td>0.00</td></tr>
+  </table>
+  <p style="text-align:center;color:#c41212;font-weight:700;margin-top:8px;">DUMMY / SAMPLE QUOTE — no reservation held · Routebook demo</p>
+  <div class="foot">2010 – 2026 Sample Tour Agency / routebook.demo</div>
+</section>
+
+<section class="sheet">
+  <div class="lh">
+    <div class="mark">STA</div>
+    <div class="who">
+      <strong>Sample Tour Agency</strong>
+      <span>Routebook demo letterhead · Western markets</span>
+    </div>
+    <div class="contact">
+      100 Demo Plaza, Suite 4, Honolulu, HI 96815<br>
+      +1 (808) 555-0142 · hello@sampletour.example
+    </div>
+  </div>
+  <div class="titlebox">DETAIL ITINERARY FOR 5 NIGHTS AND 6 DAYS — HAWAII HONEYMOON</div>
+  <div class="cols">
+    <div>
+      <article class="day">
+        <h3>Day 1 : Arrival Oahu &amp; Waikiki welcome</h3>
+        <ul>
+          <li>Arrive HNL — meet &amp; greet by Sample Tour Agency host</li>
+          <li>Private transfer to Waikiki resort</li>
+          <li>Check-in and welcome amenity</li>
+          <li>Evening: Waikiki sunset sail (soft drinks)</li>
+          <li>Overnight Waikiki</li>
+        </ul>
+      </article>
+      <article class="day">
+        <h3>Day 2 : North Shore &amp; windward Oahu</h3>
+        <ul>
+          <li>Breakfast at resort</li>
+          <li>Private driver — Haleiwa town stop</li>
+          <li>Waimea Bay photo / swim (conditions permitting)</li>
+          <li>Windward lookouts; return Waikiki</li>
+          <li>Overnight Waikiki</li>
+        </ul>
+      </article>
+      <article class="day">
+        <h3>Day 3 : Fly to Maui · Kaʻanapali</h3>
+        <ul>
+          <li>Checkout; transfer to HNL</li>
+          <li>Inter-island flight HNL → OGG</li>
+          <li>Private transfer to Kaʻanapali resort</li>
+          <li>Beach afternoon at leisure</li>
+          <li>Overnight Kaʻanapali</li>
+        </ul>
+      </article>
+    </div>
+    <div>
+      <article class="day">
+        <h3>Day 4 : Road to Hana</h3>
+        <ul>
+          <li>Early guided Hana day (picnic included)</li>
+          <li>Waterfall and rainforest stops</li>
+          <li>Black-sand beach photo stop</li>
+          <li>Return Kaʻanapali early evening</li>
+          <li>Overnight Kaʻanapali</li>
+        </ul>
+      </article>
+      <article class="day">
+        <h3>Day 5 : Leisure &amp; sunset catamaran</h3>
+        <ul>
+          <li>Free morning — beach, pool, or optional snorkel</li>
+          <li>Late-afternoon Kaʻanapali sunset catamaran</li>
+          <li>Light pupus and soft drinks on board</li>
+          <li>Overnight Kaʻanapali</li>
+        </ul>
+      </article>
+      <article class="day">
+        <h3>Day 6 : Departure</h3>
+        <ul>
+          <li>Breakfast and checkout</li>
+          <li>Private transfer to Kahului Airport (OGG)</li>
+          <li>Fly onward with sweet memories</li>
+        </ul>
+      </article>
+    </div>
+  </div>
+  <div class="foot">2010 – 2026 Sample Tour Agency / routebook.demo</div>
+</section>
+
+<section class="sheet">
+  <div class="lh">
+    <div class="mark">STA</div>
+    <div class="who">
+      <strong>Sample Tour Agency</strong>
+      <span>Routebook demo letterhead · Western markets</span>
+    </div>
+    <div class="contact">
+      100 Demo Plaza, Suite 4, Honolulu, HI 96815<br>
+      +1 (808) 555-0142 · hello@sampletour.example
+    </div>
+  </div>
+  <div class="round">
+    <h3>Package Inclusions:</h3>
+    <ul>
+      <li><b>1 Room</b> double occupancy in the listed hotels/resorts</li>
+      <li><b>Daily breakfast</b> for 6 days (arrival day amenity if breakfast missed)</li>
+      <li>Private airport/resort transfers on Oahu and Maui</li>
+      <li>One-way inter-island airfare HNL→OGG for both guests (coach)</li>
+      <li>Waikiki sunset sail + Maui sunset catamaran</li>
+      <li>Guided Road to Hana day with picnic lunch</li>
+      <li>Taxes and resort fees on listed stays — no other hidden package fees</li>
+    </ul>
+  </div>
+  <div class="round">
+    <h3>Package Exclusions:</h3>
+    <ul>
+      <li>Mainland / international flights to or from Hawaii</li>
+      <li>Any excursions or sightseeing beyond this itinerary</li>
+      <li>Lunch, dinner, laundry, phone, internet, alcoholic beverages, incidentals</li>
+      <li>Optional water sports / spa (unless listed as included)</li>
+      <li>Travel insurance and anything not in Inclusions</li>
+    </ul>
+  </div>
+  <p><b>Booking Procedure :</b></p>
+  <p>All bookings are confirmed with 40% payment at confirmation. Balance due 21 days before arrival (or on arrival for last-minute demo quotes).</p>
+  <p class="pink">We need below details to confirm the booking :</p>
+  <ol>
+    <li>Passport or REAL ID of all guests.</li>
+    <li>Arrival and departure flight details.</li>
+    <li>Contact mobile of lead guest.</li>
+    <li>Proof of deposit payment.</li>
+  </ol>
+  <div class="foot">2010 – 2026 Sample Tour Agency / routebook.demo</div>
+</section>
+
+<section class="sheet">
+  <div class="lh">
+    <div class="mark">STA</div>
+    <div class="who">
+      <strong>Sample Tour Agency</strong>
+      <span>Routebook demo letterhead · Western markets</span>
+    </div>
+    <div class="contact">
+      100 Demo Plaza, Suite 4, Honolulu, HI 96815<br>
+      +1 (808) 555-0142 · hello@sampletour.example
+    </div>
+  </div>
+  <div class="paybox">
+    <h3>Demo payment instructions (not a live account)</h3>
+    <p style="margin:0 0 6px"><b>Beneficiary:</b> Sample Tour Agency LLC<br>
+    <b>Bank:</b> Demo Pacific Bank · Routing 021000021 · Acct 000123456789<br>
+    <b>Memo:</b> QTN/DEMO/2026/HI-01 · Sample Guest<br>
+    <b>Card / ACH:</b> Use Routebook demo checkout link provided by desk</p>
+    <p style="margin:0;color:#c41212;font-weight:700">For layout only — do not wire real funds to these sample details.</p>
+  </div>
+  <div class="hero">
+    <h2>Complimentary honeymoon touches</h2>
+    <p>In-room sparkling cider · one couples photo print · late checkout when allotment allows</p>
+  </div>
+  <div class="foot">2010 – 2026 Sample Tour Agency / routebook.demo</div>
+</section>
+
+<section class="sheet last">
+  <div class="lh">
+    <div class="mark">STA</div>
+    <div class="who">
+      <strong>Sample Tour Agency</strong>
+      <span>Routebook demo letterhead · Western markets</span>
+    </div>
+    <div class="contact">
+      100 Demo Plaza, Suite 4, Honolulu, HI 96815<br>
+      +1 (808) 555-0142 · hello@sampletour.example
+    </div>
+  </div>
+  <h4>General Terms and Conditions:</h4>
+  <ol>
+    <li>This is a quote only; no reservations are held until deposit and written confirmation.</li>
+    <li>Rooms and rates are subject to availability at confirmation.</li>
+    <li>Transfers are point-to-point as listed. Deviations incur additional charges.</li>
+    <li>Dinner or nightlife transfers are not included unless stated.</li>
+    <li>Inter-island flight or boat cancellations follow operator policy; hotels may not refund same-day no-shows.</li>
+    <li>Complimentary activities apply only at the places named in the itinerary.</li>
+    <li>Confirm inter-island seat inventory before locking mainland flights.</li>
+    <li>Peak periods (Dec 20–Jan 5, Presidents’ Week, major US holidays) may require 100% prepayment.</li>
+    <li>Child age 5 and above is generally chargeable on this package type.</li>
+  </ol>
+  <h4>Cancellation Policy</h4>
+  <ol>
+    <li>Cancel in writing from the person who made the booking.</li>
+    <li>Refunds follow hotel and activity-provider policies.</li>
+    <li>Minimum cancellation fee: 10% of total tour cost as service charge.</li>
+    <li>No refund for unused services once the trip has started.</li>
+    <li>Peak-season bookings may be non-refundable per supplier rules.</li>
+    <li>Package is typically non-refundable if cancelled within 15 days of arrival.</li>
+  </ol>
+  <p style="text-align:center;color:#c41212;font-weight:700;">DUMMY / SAMPLE QUOTE FOR LAYOUT — QTN/DEMO/2026/HI-01</p>
+  <div class="foot">2010 – 2026 Sample Tour Agency / routebook.demo</div>
+</section>
+</body>
+</html>

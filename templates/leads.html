@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}Pipeline{% endblock %}
+{% block body %}
+<h1>Pipeline</h1>
+<p class="sub">Inquiry → quoted → confirmed. Build quote versions with line items; convert when they pay an advance.</p>
+<div class="card">
+  <h2>New inquiry</h2>
+  <form method="post" action="/leads" class="form-grid">
+    <div><label>Name</label><input name="name" required></div>
+    <div><label>Phone</label><input name="phone" placeholder="+1 / +44 / +33…"></div>
+    <div><label>Email</label><input name="email"></div>
+    <div><label>Source</label>
+      <select name="source"><option>WhatsApp</option><option>Instagram</option><option>Website</option><option>Referral</option><option>Walk-in</option></select>
+    </div>
+    <div><label>Pax</label><input name="pax" type="number" value="2"></div>
+    <div><label>Destination</label><input name="destination" placeholder="Hawaii / Iceland / Greece…"></div>
+    <div><label>Market / country</label><input name="country" placeholder="United States / UK / …"></div>
+    <div><label>Currency</label>
+      <select name="currency">
+        {% for c in currencies %}<option value="{{ c }}" {% if c==(default_currency or 'USD') %}selected{% endif %}>{{ c }}</option>{% endfor %}
+      </select>
+    </div>
+    <div><label>From</label><input type="date" name="travel_from"></div>
+    <div><label>To</label><input type="date" name="travel_to"></div>
+    <div style="grid-column:1/-1"><label>Notes</label><input name="notes" style="width:100%"></div>
+    <div><button class="btn" type="submit">Save lead</button></div>
+  </form>
+</div>
+<div class="kanban">
+{% for s in stages %}
+  <div class="col">
+    <h3>{{ s }} ({{ by_stage[s]|length }})</h3>
+    {% for l in by_stage[s] %}
+    <div class="ticket">
+      <strong>{{ l.name }}</strong>
+      <div class="muted">{{ l.destination or "—" }} · {{ l.pax }} pax{% if l.country %} · {{ l.country }}{% endif %}</div>
+      <div class="muted">{{ l.quoted_inr|money(l.currency or 'USD') }} · {{ l.source }}</div>
+      <form method="post" action="/leads/{{ l.id }}/stage" style="margin-top:6px">
+        <select name="stage" onchange="this.form.submit()">
+          {% for st in stages %}<option value="{{ st }}" {% if st==l.stage %}selected{% endif %}>{{ st }}</option>{% endfor %}
+        </select>
+      </form>
+      {% if l.stage not in ['Confirmed','Completed','Lost'] %}
+      <form method="post" action="/leads/{{ l.id }}/convert" style="margin-top:6px">
+        <button class="btn small ghost" type="submit">Convert to booking</button>
+      </form>
+      {% endif %}
+      {% set qv = quotes.get(l.id) %}
+      {% if qv %}
+      <div class="muted" style="margin-top:8px">Quote v{{ qv.version_no }} · {{ qv.total_amount|money(qv.currency or l.currency or 'USD') }}</div>
+      {% for li in lines_by_qv.get(qv.id, []) %}
+      <div class="muted" style="font-size:12px;display:flex;justify-content:space-between;gap:4px;align-items:center">
+        <span>{{ li.line_type }}: {{ li.description }} · {{ li.qty }}×{{ li.unit_amount }}</span>
+        <form class="inline" method="post" action="/quote/lines/{{ li.id }}/delete"><button class="btn small ghost" type="submit">×</button></form>
+      </div>
+      {% endfor %}
+      <form method="post" action="/leads/{{ l.id }}/quote" style="margin-top:4px">
+        <input type="hidden" name="bump" value="1">
+        <input type="hidden" name="label" value="v{{ qv.version_no + 1 }}">
+        <button class="btn small ghost" type="submit">New quote version</button>
+      </form>
+      {% else %}
+      <form method="post" action="/leads/{{ l.id }}/quote" style="margin-top:6px">
+        <button class="btn small ghost" type="submit">Start quote</button>
+      </form>
+      {% endif %}
+      <details style="margin-top:6px">
+        <summary class="muted" style="cursor:pointer;font-size:12px">Add line</summary>
+        <form method="post" action="/leads/{{ l.id }}/quote/lines" class="form-grid" style="margin-top:6px">
+          <div><label>Type</label>
+            <select name="line_type">{% for t in line_types %}<option value="{{ t }}">{{ t }}</option>{% endfor %}</select>
+          </div>
+          <div><label>Description</label><input name="description" placeholder="Hotel / fee…"></div>
+          <div><label>Qty</label><input name="qty" type="number" value="1"></div>
+          <div><label>Unit amount</label><input name="unit_amount" type="number" value="0"></div>
+          <div><label>Currency</label>
+            <select name="currency">
+              {% for c in currencies %}<option value="{{ c }}" {% if c==(l.currency or 'USD') %}selected{% endif %}>{{ c }}</option>{% endfor %}
+            </select>
+          </div>
+          <div><button class="btn small" type="submit">Add line</button></div>
+        </form>
+      </details>
+    </div>
+    {% endfor %}
+  </div>
+{% endfor %}
+</div>
+{% endblock %}

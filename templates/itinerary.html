@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Itinerary · {{ b.ref }}</title>
+<style>
+:root { --ink:#1a2332; --paper:#f6f1e8; --sand:#e8dcc8; --sea:#1f6f78; --muted:#6b6258; --card:#fffdf8; }
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.5 "Iowan Old Style", Palatino, Georgia, serif;background:var(--paper);color:var(--ink)}
+.wrap{max-width:820px;margin:0 auto;padding:28px 24px 64px}
+.brand{font-weight:700;letter-spacing:.04em;font-size:20px;margin-bottom:4px}
+.brand span{color:#c45c3e;font-weight:400}
+h1{font-size:26px;margin:18px 0 4px}
+.sub{color:var(--muted);margin:0 0 18px}
+.card{background:var(--card);border:1px solid var(--sand);border-radius:12px;padding:16px 18px;margin-bottom:14px}
+h2{font-size:15px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0 0 10px}
+.row{padding:8px 0;border-bottom:1px dashed #eadfce}
+.row:last-child{border:0}
+.muted{color:var(--muted);font-size:13px}
+.pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;background:var(--sand)}
+.actions{margin:12px 0 22px;display:flex;gap:10px;flex-wrap:wrap}
+.btn{display:inline-block;background:var(--sea);color:#fff;border:0;border-radius:8px;padding:8px 14px;text-decoration:none;font:inherit;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--sea);border:1px solid var(--sea)}
+@media print {
+  .actions,.noprint{display:none !important}
+  body{background:#fff}
+  .card{border-color:#ccc;break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">{{ agency_name }} <span>itinerary</span></div>
+  <div class="muted noprint">Generated {{ generated_at }} · print-friendly (PDF via browser print)</div>
+  <div class="actions noprint">
+    <a class="btn ghost" href="/bookings">← Bookings</a>
+    <button class="btn" type="button" onclick="window.print()">Print / Save PDF</button>
+  </div>
+  <h1>{{ b.ref }} · {{ b.traveller or b.guest_name or "Guest" }}</h1>
+  <p class="sub">
+    {{ b.package_name or "Custom itinerary" }}
+    · {{ b.travel_from }} → {{ b.travel_to }}
+    · {{ b.pax }} pax
+    · {{ b.currency or 'USD' }}
+    · status {{ b.status }}
+  </p>
+
+  {% if travelers %}
+  <div class="card">
+    <h2>Travelers</h2>
+    {% for t in travelers %}
+    <div class="row">
+      <strong>{{ t.name }}</strong>
+      <div class="muted">{{ t.nationality or "—" }} · passport {{ t.passport_no or "—" }} exp {{ t.passport_expiry or "—" }}</div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if days_notes %}
+  <div class="card">
+    <h2>Day plan / notes</h2>
+    {% for line in days_notes %}
+    <div class="row">{{ line }}</div>
+    {% endfor %}
+    {% if b.package_highlights %}
+    <div class="muted" style="margin-top:8px">Package: {{ b.package_highlights }}</div>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  <div class="card">
+    <h2>Hotels</h2>
+    {% if not hotels %}<p class="muted">None on file.</p>{% endif %}
+    {% for h in hotels %}
+    <div class="row">
+      <strong>{{ h.name or "Hotel" }}{% if h.location %} · {{ h.location }}{% endif %}</strong>
+      <div class="muted">{{ h.check_in or "—" }} → {{ h.check_out or "—" }} · {{ h.room_type or "—" }} · {{ h.rooms or 1 }} room(s)
+        · <span class="pill">{{ h.status }}</span>
+        {% if h.human_approved %} · approved{% else %} · pending approval{% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="card">
+    <h2>Ferries</h2>
+    {% if not ferries %}<p class="muted">None on file.</p>{% endif %}
+    {% for f in ferries %}
+    <div class="row">
+      <strong>{{ f.operator or "Ferry" }} · {{ f.from_port }} → {{ f.to_port }}</strong>
+      <div class="muted">dep {{ f.depart_at or "—" }} · arr {{ f.arrive_at or "—" }} · {{ f.pax or "—" }} pax
+        · <span class="pill">{{ f.status }}</span>
+        {% if f.human_approved %} · approved{% else %} · pending approval{% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="card">
+    <h2>Flights</h2>
+    {% if not flights %}<p class="muted">None on file.</p>{% endif %}
+    {% for f in flights %}
+    <div class="row">
+      <strong>{{ f.airline }} {{ f.flight_no }} · {{ f.from_airport }} → {{ f.to_airport }}</strong>
+      <div class="muted">{{ f.direction }} · dep {{ f.depart_at or "—" }} · arr {{ f.arrive_at or "—" }}
+        · PNR {{ f.pnr or "—" }} · <span class="pill">{{ f.status }}</span></div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="card">
+    <h2>Cabs / transfers</h2>
+    {% if not cabs %}<p class="muted">None on file.</p>{% endif %}
+    {% for c in cabs %}
+    <div class="row">
+      <strong>{{ c.from_place }} → {{ c.to_place }}</strong>
+      <div class="muted">{{ c.when_at or "—" }} · {{ c.vehicle or "—" }} · {{ c.vendor or "—" }}
+        · <span class="pill">{{ c.status }}</span></div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="card">
+    <h2>Commercial</h2>
+    <div class="row">Quoted {{ b.quoted_inr|money(b.currency or 'USD') }} · Paid {{ b.paid|money(b.currency or 'USD') }}
+      · Due {{ ((b.quoted_inr or 0) - (b.paid or 0))|money(b.currency or 'USD') }}</div>
+  </div>
+</div>
+</body>
+</html>
